@@ -1,0 +1,13 @@
+{
+    "include": ["src/*"],
+    "compileOnSave": false,
+
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "strict": true,
+        "lib": ["dom", "es6"],
+        "esModuleInterop": true,
+        "resolveJsonModule": true
+    }
+}
