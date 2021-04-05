@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "description": "Tool for minifying http requests",
     "scripts": {
-        "build": "webpack"
+        "build": "webpack",
+        "serve": "webpack serve"
     },
     "author": "William Gardner",
     "license": "MIT",
