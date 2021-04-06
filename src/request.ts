@@ -1,10 +1,28 @@
-function fixHeader(header: string): string {
-    let split: string[] = header.split("-");
+export function fixHeader(header: string): string {
+    let split: string[] = header.replace(" ", "-").split("-");
     return split
         .map((str) => {
             return str.toLowerCase().charAt(0).toUpperCase() + str.slice(1);
         })
         .join("-");
+}
+
+export function fixMethod(str: string): string {
+    let upper = str.toUpperCase();
+    let methods = [
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+        "DELETE",
+        "CONNECT",
+        "OPTIONS",
+        "TRACE",
+        "PATCH"
+    ];
+
+    if (methods.indexOf(upper) == -1) return "<invalid>";
+    return upper;
 }
 
 export type Method =
@@ -30,7 +48,7 @@ export class HTTPRequest {
         let firstLine = allLines[0].split(" ");
         let rawHeaders = allLines.slice(1, allLines.indexOf(""));
 
-        let method = firstLine[0] as Method;
+        let method = fixMethod(firstLine[0]) as Method;
         let resource = firstLine[1];
         let version = firstLine[2];
 
@@ -57,18 +75,20 @@ export class HTTPRequest {
         this.resource = resource;
         this.version = version;
         this.headers = new Map<string, string>();
-        this.setBody(body);
 
         headers.forEach((val) => {
             this.setHeader(val[0], val[1]);
         });
+
+        this.setBody(body);
     }
 
     public build(): string {
         let firstLine = `${this.method} ${this.resource} ${this.version}`;
         let headers = "";
 
-        this.headers.forEach((val, key) => {
+        this.getHeaders().forEach((val, key) => {
+            console.log(key, val);
             headers += `${fixHeader(key)}: ${val}\n`;
         });
 
@@ -82,6 +102,8 @@ export class HTTPRequest {
     }
 
     public allowlist(...allow: string[]) {
+        allow.push("Content-Length");
+        allow.push("Host");
         this.headers.forEach((val, key) => {
             if (allow.indexOf(key) == -1) this.removeHeader(key);
         });
@@ -94,6 +116,8 @@ export class HTTPRequest {
     }
 
     public setHeader(key: string, val: string) {
+        if (val == undefined) val = "<missing>";
+        console.log("set header", val);
         this.headers.set(fixHeader(key), val);
     }
 
@@ -106,12 +130,18 @@ export class HTTPRequest {
         this.headers.delete(fixHeader(key));
     }
 
+    public getHeaders(): Map<string, string> {
+        return this.headers;
+    }
+
     public getBody(): string {
         return this.body;
     }
 
     public setBody(data: string) {
         this.setHeader("Content-Length", data.length.toString());
+        console.log("hdrs", this.getHeaders());
+        console.log("hrds", this.getHeader("content-length"));
         this.body = data;
     }
 }
