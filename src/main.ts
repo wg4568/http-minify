@@ -37,7 +37,6 @@ function get_list_mode(): "allow" | "deny" {
 }
 
 function make_header_item() {
-    console.log(headerInput);
     var fixed = fixHeader(headerInput.val() as string);
     if (headerItems.indexOf(fixed) == -1 && fixed != "") {
         var html = `

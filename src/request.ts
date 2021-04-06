@@ -88,7 +88,6 @@ export class HTTPRequest {
         let headers = "";
 
         this.getHeaders().forEach((val, key) => {
-            console.log(key, val);
             headers += `${fixHeader(key)}: ${val}\n`;
         });
 
@@ -104,7 +103,7 @@ export class HTTPRequest {
     public allowlist(...allow: string[]) {
         allow.push("Content-Length");
         allow.push("Host");
-        this.headers.forEach((val, key) => {
+        -this.headers.forEach((val, key) => {
             if (allow.indexOf(key) == -1) this.removeHeader(key);
         });
     }
@@ -117,7 +116,6 @@ export class HTTPRequest {
 
     public setHeader(key: string, val: string) {
         if (val == undefined) val = "<missing>";
-        console.log("set header", val);
         this.headers.set(fixHeader(key), val);
     }
 
@@ -140,8 +138,6 @@ export class HTTPRequest {
 
     public setBody(data: string) {
         this.setHeader("Content-Length", data.length.toString());
-        console.log("hdrs", this.getHeaders());
-        console.log("hrds", this.getHeader("content-length"));
         this.body = data;
     }
 }
